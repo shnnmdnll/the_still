@@ -17,7 +17,7 @@ require_once __DIR__ . '/backend/controllers/property_controller.php';
     <!-- ===== NAVBAR ===== -->
     <nav class="navbar">
         <a href="default.php" class="logo">pahingahan<span>.</span></a>
-        <a href="default.php" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+        <a href="homepage.php" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
     </nav>
 
     <div class="container">
