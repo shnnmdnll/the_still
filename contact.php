@@ -1,0 +1,166 @@
+<?php
+require_once __DIR__ . '/backend/includes/auth_guard.php';
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — Pahingahan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="frontend/css/contact.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <svg width="34" height="34" viewBox="0 0 512 512">
+      <path fill="#5c8a3a" stroke="#3c6b41" stroke-width="14" d="M104 20v112M408 20v112M40 236c0 0 96 0 96-0 26 0 26 40 0 40-13 0-96 0-96 0-22 0-22-40 0-40zM376 236c0 0 96 0 96 0 22 0 22 40 0 40-13 0-96 0-96 0-26 0-26-40 0-40z"/>
+      <path fill="#f7f0d8" stroke="#3c6b41" stroke-width="14" d="M104 132l64 104H40l64-104zM408 132l64 104H344l64-104z"/>
+      <path fill="#5c8a3a" stroke="#3c6b41" stroke-width="14" d="M40 276c0 110 96 200 216 200s216-90 216-200H40z"/>
+      <path fill="none" stroke="#3c6b41" stroke-width="10" stroke-linecap="round" d="M70 290c40 90 130 150 220 150M70 320c30 80 110 130 190 130M70 350c20 70 90 110 150 110"/>
+    </svg>
+    <span style="display:flex; flex-direction:column; line-height:1;">
+      pahingahan
+      <span style="align-self:flex-end; font-size:.32em; font-weight:600; letter-spacing:.02em; margin-top:2px;">by The Still</span>
+    </span>
+  </div>
+  <nav class="nav" id="nav">
+    <a href="homepage.php#top">
+      <svg class="icon-outline" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg>
+      <svg class="icon-fill" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.1L1 12h3v9h6v-6h4v6h6v-9h3L12 2.1z"/></svg>
+      Home</a>
+    <a href="discover.php">
+      <svg class="icon-outline" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.5l-1.8 5-5 1.8 1.8-5z"/></svg>
+      <svg class="icon-fill" width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="currentColor"/><path d="M14.5 9.5l-1.8 5-5 1.8 1.8-5z" fill="var(--cream)"/></svg>
+      Discover</a>
+    <a href="hosting.php">
+      <svg class="icon-outline" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9"/><path d="M16 7l3 3"/><path d="M13 10l2 2"/></svg>
+      <svg class="icon-fill" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="8" cy="15" r="4"/><path d="M10.8 12.2l8.5-8.5a1 1 0 0 1 1.4 0l2.1 2.1a1 1 0 0 1 0 1.4l-1.6 1.6-2.1-2.1-1.6 1.6 2.1 2.1-1.3 1.3z"/></svg>
+      Hosting</a>
+    <a href="contact.php" class="active">
+      <svg class="icon-outline" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+      <svg class="icon-fill" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 5h18a1 1 0 0 1 1 1v.3l-10 6.7L2 6.3V6a1 1 0 0 1 1-1z"/><path d="M2 8.5V18a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1V8.5l-10 6.7z"/></svg>
+      Contact</a>
+    <a href="logout.php" class="btn-logout-mobile" style="display:none; color:var(--brown); font-weight:600;">Logout (<?php echo htmlspecialchars($currentUserName); ?>)</a>
+  </nav>
+  <div class="user-menu">
+    <span class="user-greet">Hi, <?php echo htmlspecialchars($currentUserName); ?></span>
+    <button class="btn-book" onclick="location.href='homepage.php#top'">Book Your Escape</button>
+    <a href="logout.php" class="btn-logout">Logout</a>
+  </div>
+  <button class="burger" id="burgerBtn">☰</button>
+</header>
+
+<section class="contact-hero">
+  <h1>Get in Touch</h1>
+  <p>Have questions about stillness, hosting, bookings, or just want to connect? We'd love to hear from you.</p>
+</section>
+
+<section class="contact-grid">
+  <div class="contact-card">
+    <h2>Send Us a Message</h2>
+    <form id="contactForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <input type="text" id="firstName" required>
+        </div>
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <input type="text" id="lastName" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="emailInput">Email</label>
+        <input type="email" id="emailInput" placeholder="example@gmail.com" required>
+      </div>
+      <div class="form-group">
+        <label for="messageInput">Message</label>
+        <textarea id="messageInput" placeholder="Tell us more about your inquiry..." required></textarea>
+      </div>
+      <button type="submit" class="btn-send">Send Message</button>
+    </form>
+  </div>
+
+  <div class="contact-card">
+    <h2>Other Ways to Connect</h2>
+    <div class="contact-item">
+      <div class="icon-circle">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/></svg>
+      </div>
+      <div>
+        <strong>+63 2 123 4567</strong>
+        <span>Call Us</span>
+      </div>
+    </div>
+    <div class="contact-item">
+      <div class="icon-circle">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg>
+      </div>
+      <div>
+        <strong>hello@pahingahan.com</strong>
+        <span>Email Us</span>
+      </div>
+    </div>
+    <div class="contact-item">
+      <div class="icon-circle">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      </div>
+      <div>
+        <strong>The Still HQ, 1 Tranquility Grove, Metro Manila</strong>
+        <span>Find Us</span>
+      </div>
+    </div>
+    <div class="contact-map">
+      <svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>
+    </div>
+  </div>
+</section>
+
+<p class="contact-note">Our team aims to respond to all inquiries within 24 hours. Thank you for your patience.</p>
+
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <h4>Company</h4>
+      <ul>
+        <li>About Us</li>
+        <li>Careers</li>
+        <li>Press</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Learn</h4>
+      <ul>
+        <li>Guides</li>
+        <li>Host Resources</li>
+        <li>FAQs</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Support</h4>
+      <ul>
+        <li>Help Center</li>
+        <li>Safety</li>
+        <li>Cancellation Options</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Social Media Icons</h4>
+      <ul>
+        <li>Facebook</li>
+        <li>Instagram</li>
+        <li>TikTok</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 Pahingahan. Rest deep, wander far.</div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="frontend/js/contact.js"></script>
+</body>
+</html>
