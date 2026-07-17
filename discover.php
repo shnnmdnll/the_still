@@ -10,6 +10,62 @@ require_once __DIR__ . '/backend/includes/auth_guard.php';
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="frontend/css/discover.css">
+<style>
+  /* Additional inline styles para sa centering */
+  .discover-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 70vh;
+    padding: 2rem;
+    text-align: center;
+    flex: 1;
+  }
+
+  .discover-message {
+    font-size: 1.5rem;
+    line-height: 1.8;
+    max-width: 800px;
+    color: #1e1e1e;
+    margin: 0 auto;
+  }
+
+  .discover-message h2 {
+    font-weight: 500;
+    font-size: 1.5rem;
+  }
+
+  /* Para ma-push ang footer sa baba */
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #curatedStays {
+    flex: 1;
+  }
+
+  footer {
+    margin-top: auto;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  @media (max-width: 600px) {
+    .discover-message {
+      font-size: 1.2rem;
+      padding: 0 1rem;
+    }
+  }
+</style>
 </head>
 <body>
 
@@ -48,45 +104,27 @@ require_once __DIR__ . '/backend/includes/auth_guard.php';
   <div class="user-menu">
     <span class="user-greet">Hi, <?php echo htmlspecialchars($currentUserName); ?></span>
     <button class="btn-book" onclick="location.href='homepage.php#top'">Book Your Escape</button>
-    <a href="logout.php" class="btn-logout">Logout</a>
+    <div class="profile-menu" style="position:relative; flex-shrink:0;">
+      <button type="button" class="profile-menu-btn" title="Account" aria-label="Account menu" style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:50%; background:#fff; border:1.5px solid #5c8a3a; color:#3c6b41; cursor:pointer;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+      </button>
+      <div class="profile-dropdown" style="display:none; position:absolute; right:0; top:50px; background:#fff; border:1px solid #e2ddc9; border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.12); min-width:180px; overflow:hidden; z-index:50;">
+        <a href="profile.php" style="display:block; padding:12px 16px; color:#2f2a20; text-decoration:none; font-size:.9rem; font-weight:500;">Account</a>
+        <a href="my_bookings.php" style="display:block; padding:12px 16px; color:#2f2a20; text-decoration:none; font-size:.9rem; font-weight:500; border-top:1px solid #f0ece0;">My Bookings</a>
+        <a href="stay_history.php" style="display:block; padding:12px 16px; color:#2f2a20; text-decoration:none; font-size:.9rem; font-weight:500; border-top:1px solid #f0ece0;">Stay History</a>
+        <a href="logout.php" style="display:block; padding:12px 16px; color:#c0392b; text-decoration:none; font-size:.9rem; font-weight:500; border-top:1px solid #f0ece0;">Logout</a>
+      </div>
+    </div>
   </div>
   <button class="burger" id="burgerBtn">☰</button>
 </header>
 
-<section class="section" id="featured">
-  <div class="discover-hero">
-    <div class="discover-main">
-      <img src="https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?auto=format&fit=crop&w=1000&q=80" alt="The Sun Atrium Cabin living room" id="discoverMainImg">
-    </div>
-    <div class="discover-thumbs" id="discoverThumbs">
-      <img src="https://images.unsplash.com/photo-1449844908441-8829872d2607?auto=format&fit=crop&w=300&q=80" alt="Deck view">
-      <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=300&q=80" alt="Bathroom">
-      <img src="https://images.unsplash.com/photo-1517824806704-9040b037703b?auto=format&fit=crop&w=300&q=80" alt="Bedroom">
-    </div>
-    <div class="discover-content">
-      <h2>Discover more<br>in The Still.</h2>
-      <p>Where architectural unique meets serene solitude. Curated. Exclusive. Unforgettable.</p>
-      <p class="discover-feature"><strong>Featured Destination: The Sun Atrium Cabin.</strong></p>
-      <p class="discover-feature loc">Location: Sierra Madre Mountain Range.<br>Price range from ₱8,800 / night.</p>
-      <a href="#curatedStays" class="discover-cta">Explore Details</a>
-    </div>
-    <div class="discover-dots" id="discoverDots">
-      <button class="arrow" id="discoverPrev" aria-label="Previous">‹</button>
-      <button class="active" data-i="0"></button>
-      <button data-i="1"></button>
-      <button data-i="2"></button>
-      <button data-i="3"></button>
-      <button class="arrow" id="discoverNext" aria-label="Next">›</button>
-    </div>
-  </div>
-</section>
-
 <section class="section" id="curatedStays">
   <div class="featured-head">
-    <h2>Discover More Curated Stays</h2>
-    <div class="carousel-controls">
-      <button class="carousel-btn prev" id="prevBtn">‹</button>
-      <button class="carousel-btn next" id="nextBtn">›</button>
+    <div class="discover-wrapper">
+      <div class="discover-message">
+        <h2>The Discover section is currently under development as part of our ongoing efforts to enhance the platform. We are working to bring you new features and content designed to improve your overall experience. Thank you for your patience and support — please check back soon for updates.</h2>
+      </div>
     </div>
   </div>
   <div class="listing-track" id="listingTrack"></div>
@@ -99,5 +137,19 @@ require_once __DIR__ . '/backend/includes/auth_guard.php';
 <div class="toast" id="toast"></div>
 
 <script src="frontend/js/discover.js"></script>
+<script>
+(function(){
+  document.querySelectorAll(".profile-menu-btn").forEach(function(btn){
+    var dropdown = btn.nextElementSibling;
+    btn.addEventListener("click", function(e){
+      e.stopPropagation();
+      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    });
+  });
+  document.addEventListener("click", function(){
+    document.querySelectorAll(".profile-dropdown").forEach(function(d){ d.style.display = "none"; });
+  });
+})();
+</script>
 </body>
 </html>

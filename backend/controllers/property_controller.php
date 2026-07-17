@@ -1,16 +1,4 @@
 <?php
-/**
- * property_controller.php
- * -----------------------------------------------------------------
- * BACKEND: Data logic for the property-detail page.
- * (moved out of property-detail.php, which is now view-only)
- *
- * Sets, for use by the view:
- *   $property            - the requested property row
- *   $similar_properties  - up to 4 other properties in the same location
- *   $amenities           - $property['amenities'] exploded into an array
- * -----------------------------------------------------------------
- */
 
 require_once __DIR__ . '/../includes/db.php';
 

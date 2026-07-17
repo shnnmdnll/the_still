@@ -45,6 +45,24 @@ require_once __DIR__ . '/backend/controllers/property_controller.php';
                 </div>
             </div>
 
+            <?php
+            // TEMPORARY: hardcoded host check while there's no multi-account login yet.
+            // Once login has roles, replace $hostId with the logged-in user's id.
+            $hostId = 1;
+            if ((int)($property['user_id'] ?? 0) === $hostId):
+            ?>
+            <div class="manage-actions" style="display:flex; gap:12px; margin: 16px 0;">
+                <a href="edit-property.php?id=<?php echo (int)$property['id']; ?>"
+                   style="padding:10px 18px; border-radius:8px; background:#5c8a3a; color:#fff; text-decoration:none; font-weight:600;">
+                    <i class="fas fa-pen"></i> Edit Property
+                </a>
+                <button onclick="deleteProperty(<?php echo (int)$property['id']; ?>)"
+                        style="padding:10px 18px; border-radius:8px; background:#c0392b; color:#fff; border:none; font-weight:600; cursor:pointer;">
+                    <i class="fas fa-trash"></i> Delete Property
+                </button>
+            </div>
+            <?php endif; ?>
+
             <div class="detail-info-grid">
                 <div class="info-item">
                     <i class="fas fa-users"></i>
@@ -83,7 +101,7 @@ require_once __DIR__ . '/backend/controllers/property_controller.php';
             <?php endif; ?>
 
             <button class="btn-book" onclick="alert('Booking functionality coming soon!')">
-                <i class="fas fa-calendar-check"></i> Book Now
+                <a href="book_now.php?property_id=<?= $property['id'] ?>" class="btn">Book Now</a>
             </button>
         </div>
 
@@ -113,5 +131,6 @@ require_once __DIR__ . '/backend/controllers/property_controller.php';
         <?php endif; ?>
     </div>
 
+<script src="frontend/js/manage-property.js"></script>
 </body>
 </html>

@@ -48,7 +48,17 @@ require_once __DIR__ . '/backend/includes/auth_guard.php';
   <div class="user-menu">
     <span class="user-greet">Hi, <?php echo htmlspecialchars($currentUserName); ?></span>
     <button class="btn-book" onclick="location.href='homepage.php#top'">Book Your Escape</button>
-    <a href="logout.php" class="btn-logout">Logout</a>
+    <div class="profile-menu" style="position:relative; flex-shrink:0;">
+      <button type="button" class="profile-menu-btn" title="Account" aria-label="Account menu" style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:50%; background:#fff; border:1.5px solid #5c8a3a; color:#3c6b41; cursor:pointer;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+      </button>
+      <div class="profile-dropdown" style="display:none; position:absolute; right:0; top:50px; background:#fff; border:1px solid #e2ddc9; border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.12); min-width:180px; overflow:hidden; z-index:50;">
+        <a href="profile.php" style="display:block; padding:12px 16px; color:#2f2a20; text-decoration:none; font-size:.9rem; font-weight:500;">Account</a>
+        <a href="my_bookings.php" style="display:block; padding:12px 16px; color:#2f2a20; text-decoration:none; font-size:.9rem; font-weight:500; border-top:1px solid #f0ece0;">My Bookings</a>
+        <a href="stay_history.php" style="display:block; padding:12px 16px; color:#2f2a20; text-decoration:none; font-size:.9rem; font-weight:500; border-top:1px solid #f0ece0;">Stay History</a>
+        <a href="logout.php" style="display:block; padding:12px 16px; color:#c0392b; text-decoration:none; font-size:.9rem; font-weight:500; border-top:1px solid #f0ece0;">Logout</a>
+      </div>
+    </div>
   </div>
   <button class="burger" id="burgerBtn">☰</button>
 </header>
@@ -65,7 +75,7 @@ require_once __DIR__ . '/backend/includes/auth_guard.php';
     </div>
     <h3>List and Showcase.</h3>
     <p>Create beautiful listings with stunning photos and unique features.</p>
-    <a href="#" class="btn-start">Start Listing</a>
+    <a href="add-property.php" class="btn-start">Start Listing</a>
   </div>
   <div class="host-card">
     <div class="icon-circle">
@@ -73,6 +83,7 @@ require_once __DIR__ . '/backend/includes/auth_guard.php';
     </div>
     <h3>Manage Smart.</h3>
     <p>Streamlined booking, calendar, and pricing tools.</p>
+    <a href="booking_management.php" class="btn-start">View Bookings</a>
   </div>
   <div class="host-card">
     <div class="icon-circle">
@@ -92,7 +103,7 @@ require_once __DIR__ . '/backend/includes/auth_guard.php';
     <div>
       <h4>Create Your Listing.</h4>
       <p>Describe your space and add photos.</p>
-      <a href="#" class="btn-apply">Apply Now</a>
+      <a href="add-property.php" class="btn-apply">Apply Now</a>
     </div>
   </div>
   <div class="step-card">
@@ -122,5 +133,19 @@ require_once __DIR__ . '/backend/includes/auth_guard.php';
 <div class="toast" id="toast"></div>
 
 <script src="frontend/js/hosting.js"></script>
+<script>
+(function(){
+  document.querySelectorAll(".profile-menu-btn").forEach(function(btn){
+    var dropdown = btn.nextElementSibling;
+    btn.addEventListener("click", function(e){
+      e.stopPropagation();
+      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    });
+  });
+  document.addEventListener("click", function(){
+    document.querySelectorAll(".profile-dropdown").forEach(function(d){ d.style.display = "none"; });
+  });
+})();
+</script>
 </body>
 </html>

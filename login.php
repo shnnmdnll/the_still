@@ -89,6 +89,12 @@ require_once __DIR__ . '/backend/controllers/auth_controller.php';
                 </div>
                 <div class="form-group">
                     <div class="input-wrapper">
+                        <i class="fas fa-phone"></i>
+                        <input type="tel" id="regContact" name="regContact" placeholder="e.g. 09171234567 or +639171234567" inputmode="tel" maxlength="13" pattern="(09\d{9}|\+63\d{10})" title="Enter a valid PH mobile number: starts with 09 (11 digits) or +63 (13 characters)" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-wrapper">
                         <i class="fas fa-lock"></i>
                         <input type="password" id="regPassword" name="regPassword" placeholder="Password (min 6 chars)" required minlength="6">
                     </div>

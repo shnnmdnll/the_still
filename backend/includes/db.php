@@ -1,16 +1,4 @@
 <?php
-/**
- * db.php
- * -----------------------------------------------------------------
- * BACKEND: Shared PDO database connection.
- *
- * NOTE: This file was referenced by auth_controller.php,
- * property_controller.php and search_controller.php (as
- * 'includes/db.php' / '../includes/db.php') in the files you
- * uploaded, but db.php itself was NOT among them — so this is a
- * placeholder you need to fill in with your real credentials.
- * -----------------------------------------------------------------
- */
 
 $db_host = 'localhost';
 $db_name = 'the_still';
