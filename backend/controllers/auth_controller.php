@@ -1,44 +1,15 @@
 <?php
 // auth_controller.php - BACKEND: Authentication logic for login/register
-// (moved from auth_logic.php)
 
-// Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Initialize message variables
 $message = '';
 $msgType = '';
 
-// ========================================
-// DATABASE CONNECTION
-// ========================================
 require_once __DIR__ . '/../includes/db.php';
-
-// ========================================
-// CREATE USERS TABLE IF NOT EXISTS
-// ========================================
-try {
-    // Check if users table exists
-    $tableCheck = $pdo->query("SHOW TABLES LIKE 'users'");
-    if ($tableCheck->rowCount() == 0) {
-        // Create users table
-        $sql = "CREATE TABLE users (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            name VARCHAR(100) NOT NULL,
-            email VARCHAR(100) UNIQUE NOT NULL,
-            password VARCHAR(255) NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )";
-        $pdo->exec($sql);
-        error_log("Users table created successfully!");
-    }
-} catch (PDOException $e) {
-    error_log('Table creation error: ' . $e->getMessage());
-    $message = 'Database setup error: ' . $e->getMessage();
-    $msgType = 'error';
-}
+require_once __DIR__ . '/../includes/mailer.php';
 
 // ========================================
 // LOGIN HANDLER
@@ -47,33 +18,48 @@ if (isset($_POST['loginBtn'])) {
     $email = trim($_POST['loginEmail'] ?? '');
     $password = $_POST['loginPassword'] ?? '';
 
-    // Validation
     if (empty($email) || empty($password)) {
         $message = 'Please fill in all fields.';
         $msgType = 'error';
     } else {
         try {
-            // Check if user exists
             $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
             $stmt->execute([':email' => $email]);
             $user = $stmt->fetch();
 
             if ($user && password_verify($password, $user['password'])) {
-                // Login successful - set session
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['user_name'] = $user['name'];
-                $_SESSION['user_email'] = $user['email'];
-                $_SESSION['logged_in'] = true;
+                $isActive = $user['is_active'] === null || $user['is_active'] === 't' || $user['is_active'] === true;
+                $isVerified = $user['is_verified'] === 't' || $user['is_verified'] === true;
 
-                $message = 'Welcome back, ' . htmlspecialchars($user['name']) . '!';
-                $msgType = 'success';
+                if (!$isActive) {
+                    $message = 'Your account has been suspended. Please contact support.';
+                    $msgType = 'error';
+                } elseif (!$isVerified) {
+                    $message = 'Please verify your email first. Check your inbox for the verification link we sent you.';
+                    $msgType = 'error';
+                } else {
+                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['user_name'] = $user['name'];
+                    $_SESSION['user_email'] = $user['email'];
+                    $_SESSION['role'] = $user['role'];
+                    $_SESSION['logged_in'] = true;
 
-                // Redirect to homepage after 1.5 seconds
-                echo '<script>
-                    setTimeout(function() {
-                        window.location.href = "homepage.php";
-                    }, 1500);
-                </script>';
+                    $message = 'Welcome back, ' . htmlspecialchars($user['name']) . '!';
+                    $msgType = 'success';
+
+                    $redirectPage = match ($user['role']) {
+                        'owner' => 'owner/dashboard.php',
+                        'host'  => 'host/today.php',
+                        'staff' => 'staff/tasks.php',
+                        default => 'homepage.php',
+                    };
+
+                    echo '<script>
+                        setTimeout(function() {
+                            window.top.location.href = "' . $redirectPage . '";
+                        }, 1500);
+                    </script>';
+                }
             } else {
                 $message = 'Invalid email or password. Please try again.';
                 $msgType = 'error';
@@ -90,70 +76,73 @@ if (isset($_POST['loginBtn'])) {
 // REGISTER HANDLER
 // ========================================
 if (isset($_POST['registerBtn'])) {
-    $name = trim($_POST['regName'] ?? '');
+    $firstName = trim($_POST['regFirstName'] ?? '');
+    $lastName = trim($_POST['regLastName'] ?? '');
+    $name = trim($firstName . ' ' . $lastName);
     $email = trim($_POST['regEmail'] ?? '');
+    $contact = trim($_POST['regContact'] ?? '');
     $password = $_POST['regPassword'] ?? '';
+    $role = trim($_POST['regRole'] ?? 'guest');
 
-    // Debug logging
-    error_log("Registration attempt - Name: $name, Email: $email");
+    error_log("Registration attempt - Name: $name, Email: $email, Contact: $contact, Role: $role");
 
-    // Validation
-    if (empty($name) || empty($email) || empty($password)) {
+    if (empty($firstName) || empty($lastName) || empty($email) || empty($contact) || empty($password)) {
         $message = 'Please fill in all fields.';
         $msgType = 'error';
-        error_log("Registration failed: Empty fields");
     } elseif (strlen($password) < 6) {
         $message = 'Password must be at least 6 characters.';
         $msgType = 'error';
-        error_log("Registration failed: Password too short");
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $message = 'Please enter a valid email address.';
         $msgType = 'error';
-        error_log("Registration failed: Invalid email");
+    } elseif (!preg_match('/^(09\d{9}|\+63\d{10})$/', $contact)) {
+        $message = 'Please enter a valid PH mobile number (09XXXXXXXXX).';
+        $msgType = 'error';
     } else {
+        if (!in_array($role, ['guest', 'host', 'owner'])) {
+            $role = 'guest';
+        }
+
         try {
-            // Check if email already exists
             $stmt = $pdo->prepare("SELECT id FROM users WHERE email = :email");
             $stmt->execute([':email' => $email]);
             if ($stmt->fetch()) {
                 $message = 'Email already registered. Please login.';
                 $msgType = 'error';
-                error_log("Registration failed: Email already exists - $email");
             } else {
-                // Hash password and insert user
                 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-                error_log("Password hashed successfully");
+                $otp = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+                $otpExpiresAt = date('Y-m-d H:i:s', strtotime('+10 minutes'));
 
-                $stmt = $pdo->prepare("INSERT INTO users (name, email, password, created_at) VALUES (:name, :email, :password, NOW())");
+                $stmt = $pdo->prepare("INSERT INTO users (name, email, contact_number, password, role, is_verified, otp_code, otp_expires_at, created_at) VALUES (:name, :email, :contact, :password, :role, FALSE, :otp, :otp_expires, NOW())");
                 $result = $stmt->execute([
                     ':name' => $name,
                     ':email' => $email,
-                    ':password' => $hashedPassword
+                    ':contact' => $contact,
+                    ':password' => $hashedPassword,
+                    ':role' => $role,
+                    ':otp' => $otp,
+                    ':otp_expires' => $otpExpiresAt
                 ]);
 
                 if ($result) {
-                    $userId = $pdo->lastInsertId();
-                    error_log("User inserted successfully! ID: $userId");
+                    $emailSent = sendOtpEmail($email, $name, $otp);
 
-                    // Auto-login after registration
-                    $_SESSION['user_id'] = $userId;
-                    $_SESSION['user_name'] = $name;
-                    $_SESSION['user_email'] = $email;
-                    $_SESSION['logged_in'] = true;
-
-                    $message = 'Registration successful! Welcome, ' . htmlspecialchars($name) . '!';
+                    if ($emailSent) {
+                        $message = 'Registration successful! Please check your email (' . htmlspecialchars($email) . ') for your verification code.';
+                    } else {
+                        $message = 'Registration successful, pero hindi na-send ang verification code. Please contact support.';
+                    }
                     $msgType = 'success';
 
-                    // Redirect to homepage after 1.5 seconds
                     echo '<script>
                         setTimeout(function() {
-                            window.location.href = "login.php";
-                        }, 1500);
+                            window.top.location.href = "verify_otp.php?email=' . urlencode($email) . '";
+                        }, 2000);
                     </script>';
                 } else {
                     $message = 'Registration failed. Please try again.';
                     $msgType = 'error';
-                    error_log("Registration failed: Insert query returned false");
                 }
             }
         } catch (PDOException $e) {
@@ -164,19 +153,8 @@ if (isset($_POST['registerBtn'])) {
     }
 }
 
-// ========================================
-// PREPARE MESSAGE FOR FRONTEND
-// ========================================
 $msgJson = json_encode([
     'text' => $message,
     'type' => $msgType
 ]);
-
-// Debug: Log the message being sent
-error_log("Message JSON: " . $msgJson);
-
-// ========================================
-// REMOVED: Auto-redirect to dashboard
-// The redirect now only happens on successful login/registration
-// ========================================
 ?>

@@ -1,33 +1,18 @@
 <?php
-/**
- * db.php
- * -----------------------------------------------------------------
- * BACKEND: Shared PDO database connection.
- *
- * NOTE: This file was referenced by auth_controller.php,
- * property_controller.php and search_controller.php (as
- * 'includes/db.php' / '../includes/db.php') in the files you
- * uploaded, but db.php itself was NOT among them — so this is a
- * placeholder you need to fill in with your real credentials.
- * -----------------------------------------------------------------
- */
+// Ipakita ang mga PHP errors habang nagde-debug tayo (pwede nating tanggalin ito mamaya kapag gumagana na)
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-$db_host = 'localhost';
-$db_name = 'the_still';
-$db_user = 'root';
-$db_pass = 'Shnnmdnll_12';
+$host = "aws-0-ap-southeast-1.pooler.supabase.com";
+$port = "6543";
+$dbname = "postgres";
+$user = "postgres.jefvrwyobieeilwrtqqp";
+$password = "WalaAkongMaisip282003";
 
 try {
-    $pdo = new PDO(
-        "mysql:host={$db_host};dbname={$db_name};charset=utf8mb4",
-        $db_user,
-        $db_pass,
-        [
-            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        ]
-    );
+    $pdo = new PDO("pgsql:host=$host;port=$port;dbname=$dbname;user=$user;password=$password");
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    error_log('Database connection error: ' . $e->getMessage());
-    die('Database connection failed. Please try again later.');
+    error_log('DB Connection failed: ' . $e->getMessage());
+    die('Database connection failed: ' . $e->getMessage());
 }

@@ -1,0 +1,72 @@
+.settings-panel {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    margin-top: 20px;
+    max-width: 600px;
+}
+
+.settings-panel h2 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-green-dark);
+    margin: 0 0 20px;
+}
+
+.form-row {
+    margin-bottom: 16px;
+}
+
+.form-row label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 6px;
+}
+
+.optional-label {
+    font-weight: 400;
+    color: var(--color-text-muted);
+    font-size: 12px;
+}
+
+.form-row input,
+.form-row textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--color-text);
+}
+
+.form-row textarea {
+    resize: vertical;
+}
+
+.form-row input:focus,
+.form-row textarea:focus {
+    outline: none;
+    border-color: var(--color-green);
+}
+
+.btn-save {
+    padding: 10px 22px;
+    border: none;
+    border-radius: 8px;
+    background: var(--color-green);
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.btn-save:hover {
+    background: var(--color-green-dark);
+}

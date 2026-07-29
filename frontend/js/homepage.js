@@ -37,7 +37,7 @@ const listings = (typeof dbListings !== 'undefined' ? dbListings : []).map(p => 
     : 'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?auto=format&fit=crop&w=500&q=80'
 }));
 
-const favorites = new Set();
+const favorites = new Set((typeof userFavorites !== 'undefined' ? userFavorites : []).map(Number));
 let activeCategory = null;
 let activeQuery = { where:'', guests:0, checkIn:null, checkOut:null };
 
@@ -396,22 +396,47 @@ track.addEventListener('click', e=>{
   const btn = e.target.closest('.fav-btn');
   if(btn){
     const id = Number(btn.dataset.id);
-    if(favorites.has(id)){
+    const wasFav = favorites.has(id);
+
+    // Optimistic UI update
+    if(wasFav){
       favorites.delete(id);
       btn.classList.remove('active');
-      showToast('Removed from favorites');
     } else {
       favorites.add(id);
       btn.classList.add('active');
-      showToast('Saved to favorites ♥');
     }
+
+    fetch('api/toggle_favorite.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ unit_id: id })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(data.success){
+        showToast(data.action === 'added' ? 'Saved to favorites ♥' : 'Removed from favorites');
+      } else {
+        if(wasFav){ favorites.add(id); btn.classList.add('active'); }
+        else { favorites.delete(id); btn.classList.remove('active'); }
+        showToast(data.error || 'Something went wrong.');
+      }
+    })
+    .catch(() => {
+      if(wasFav){ favorites.add(id); btn.classList.add('active'); }
+      else { favorites.delete(id); btn.classList.remove('active'); }
+      showToast('Something went wrong. Please try again.');
+    });
+
     return;
   }
 
   // Click anywhere else on the card -> go to the property detail page
+  // Click anywhere else on the card -> buksan ang floating modal sa halip na mag-navigate
   const card = e.target.closest('.listing-card');
   if(card){
-    window.location.href = 'property-detail.php?id=' + card.dataset.id;
+    window.openUnitModal(card.dataset.id);
   }
 });
 
@@ -469,9 +494,46 @@ modalOverlay.addEventListener('click', e=>{ if(e.target === modalOverlay) modalO
 
 document.getElementById('bookingForm').addEventListener('submit', e=>{
   e.preventDefault();
-  modalOverlay.classList.remove('open');
-  showToast('Booking request sent — we\'ll confirm by email!');
-  e.target.reset();
+
+  const payload = {
+    property_id: document.getElementById('modalProperty').value,
+    check_in: document.getElementById('modalCheckIn').value,
+    check_out: document.getElementById('modalCheckOut').value,
+    guest_count: document.getElementById('modalGuests').value
+  };
+
+  const confirmBtn = document.querySelector('#bookingForm .modal-confirm');
+  const originalText = confirmBtn.textContent;
+  confirmBtn.disabled = true;
+  confirmBtn.textContent = 'Booking...';
+
+  fetch('api/quick_book.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'same-origin',
+    body: JSON.stringify(payload)
+  })
+  .then(res => res.json())
+  .then(data => {
+    confirmBtn.disabled = false;
+    confirmBtn.textContent = originalText;
+
+    if (data.success) {
+      modalOverlay.classList.remove('open');
+      showToast(data.message || 'Booking request sent — we\'ll confirm by email!');
+      e.target.reset();
+      // Let the notification bell know a new booking exists so the badge updates right away.
+      document.dispatchEvent(new CustomEvent('pahingahan:bookingCreated'));
+    } else {
+      showToast(data.error || 'Unable to complete booking.');
+    }
+  })
+  .catch(err => {
+    console.error('Booking error:', err);
+    confirmBtn.disabled = false;
+    confirmBtn.textContent = originalText;
+    showToast('Something went wrong. Please try again.');
+  });
 });
 
 /* ---------------- Toast ---------------- */

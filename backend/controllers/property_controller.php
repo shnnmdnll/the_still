@@ -1,20 +1,11 @@
 <?php
-/**
- * property_controller.php
- * -----------------------------------------------------------------
- * BACKEND: Data logic for the property-detail page.
- * (moved out of property-detail.php, which is now view-only)
- *
- * Sets, for use by the view:
- *   $property            - the requested property row
- *   $similar_properties  - up to 4 other properties in the same location
- *   $amenities           - $property['amenities'] exploded into an array
- * -----------------------------------------------------------------
- */
+// backend/controllers/property_controller.php
+// Fetches unit details for display on property-detail.php
+// NO auth/role restriction here — viewing units is open to everyone (guest, host, owner)
 
 require_once __DIR__ . '/../includes/db.php';
 
-// Get property ID from URL
+// Get unit ID from URL
 $property_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 if ($property_id <= 0) {
@@ -22,8 +13,8 @@ if ($property_id <= 0) {
     exit();
 }
 
-// Fetch property details
-$stmt = $pdo->prepare("SELECT * FROM properties WHERE id = :id AND status = 'available'");
+// Fetch unit details
+$stmt = $pdo->prepare("SELECT * FROM units WHERE id = :id AND status = 'available'");
 $stmt->execute([':id' => $property_id]);
 $property = $stmt->fetch();
 
@@ -32,8 +23,8 @@ if (!$property) {
     exit();
 }
 
-// Get similar properties (same location)
-$stmt_similar = $pdo->prepare("SELECT * FROM properties WHERE location = :location AND id != :id AND status = 'available' LIMIT 4");
+// Get similar units (same location)
+$stmt_similar = $pdo->prepare("SELECT * FROM units WHERE location = :location AND id != :id AND status = 'available' LIMIT 4");
 $stmt_similar->execute([
     ':location' => $property['location'],
     ':id' => $property_id

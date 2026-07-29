@@ -1,91 +1,44 @@
-        (function() {
-            // ----- DOM refs -----
-            const loginForm = document.getElementById('loginForm');
-            const registerForm = document.getElementById('registerForm');
-            const tabLogin = document.getElementById('tabLogin');
-            const tabRegister = document.getElementById('tabRegister');
-            const messageBox = document.getElementById('messageBox');
-            const messageText = document.getElementById('messageText');
+// frontend/js/add-property.js
+// Handles the "List a New Property" form submission on add-property.php
 
-            // show message if exists
-            function showMessage(text, type) {
-                if (!text) {
-                    messageBox.classList.add('hidden');
-                    return;
-                }
-                messageBox.classList.remove('hidden', 'error', 'success');
-                if (type === 'error') messageBox.classList.add('error');
-                else if (type === 'success') messageBox.classList.add('success');
-                messageText.textContent = text;
-            }
+document.getElementById('addPropertyForm').addEventListener('submit', function(e) {
+    e.preventDefault();
 
-            // Display initial message if exists
-            if (msgData && msgData.text) {
-                showMessage(msgData.text, msgData.type);
-            }
+    // Gather checked amenities
+    const amenities = Array.from(
+        document.querySelectorAll('.amenity-check input[type="checkbox"]:checked')
+    ).map(cb => cb.value);
 
-            // ----- tab switching -----
-            function setActiveTab(tab) {
-                if (tab === 'login') {
-                    loginForm.classList.remove('hidden');
-                    registerForm.classList.add('hidden');
-                    tabLogin.classList.add('active');
-                    tabRegister.classList.remove('active');
-                } else {
-                    loginForm.classList.add('hidden');
-                    registerForm.classList.remove('hidden');
-                    tabRegister.classList.add('active');
-                    tabLogin.classList.remove('active');
-                }
-                // clear any message when switching tab
-                showMessage('', '');
-                // clear form fields
-                document.querySelectorAll('form input').forEach(inp => inp.value = '');
-            }
+    const propertyData = {
+        name: document.getElementById('name').value,
+        description: document.getElementById('description').value,
+        price_per_night: parseFloat(document.getElementById('price').value),
+        address: document.getElementById('address').value,
+        image_url: document.getElementById('imageUrl').value,
+        max_guests: parseInt(document.getElementById('maxGuests').value),
+        bedrooms: parseInt(document.getElementById('bedrooms').value || 0),
+        bathrooms: parseInt(document.getElementById('bathrooms').value || 0),
+        amenities: amenities
+        // user_id is not sent — the backend defaults to the hardcoded host (1)
+        // for now, until proper multi-account login/roles are added.
+    };
 
-            // Tab click handlers
-            tabLogin.addEventListener('click', function(e) {
-                e.preventDefault();
-                setActiveTab('login');
-            });
-
-            tabRegister.addEventListener('click', function(e) {
-                e.preventDefault();
-                setActiveTab('register');
-            });
-
-            // Handle auto-switch to login after successful registration
-            if (msgData && msgData.text && msgData.type === 'success' && msgData.text.includes('Registration successful')) {
-                setTimeout(function() {
-                    setActiveTab('login');
-                    showMessage(msgData.text, msgData.type);
-                }, 600);
-            }
-
-            // Handle error messages - switch to appropriate tab
-            if (msgData && msgData.text) {
-                if (msgData.type === 'error') {
-                    const lowerMsg = msgData.text.toLowerCase();
-                    if (lowerMsg.includes('register') || lowerMsg.includes('email already') || lowerMsg.includes('password must')) {
-                        setActiveTab('register');
-                        showMessage(msgData.text, msgData.type);
-                    } else if (lowerMsg.includes('invalid email') || lowerMsg.includes('login') || lowerMsg.includes('fill in')) {
-                        setActiveTab('login');
-                        showMessage(msgData.text, msgData.type);
-                    } else {
-                        setActiveTab('login');
-                        showMessage(msgData.text, msgData.type);
-                    }
-                } else if (msgData.type === 'success' && !msgData.text.includes('Registration successful')) {
-                    setActiveTab('login');
-                    showMessage(msgData.text, msgData.type);
-                }
-            }
-
-            // Default to login tab if no message
-            if (!msgData || !msgData.text) {
-                setActiveTab('login');
-            }
-
-        })();
-    
+    fetch('api/add_property.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(propertyData)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert('Property listed successfully!');
+            window.location.href = 'homepage.php';
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(err => {
+        console.error('Error:', err);
+        alert('Failed to add property.');
+    });
+});

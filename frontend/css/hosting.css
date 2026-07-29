@@ -1,4 +1,4 @@
-  :root{
+:root{
     --cream:#f8f2dd;
     --cream-deep:#f3ecd2;
     --ink:#2c2a1f;
@@ -125,6 +125,13 @@
     .host-hero{ padding:36px 20px 10px; }
     .host-hero h1{ font-size:1.9rem; }
     .steps-head{ padding:40px 20px 20px; }
+  }
+  @media (max-width:480px){
+    .host-hero h1{ font-size:1.5rem; }
+    .host-hero p{ font-size:.92rem; }
+    .steps-head{ font-size:1.25rem; }
+    .host-card, .step-card{ padding:18px; }
+    .step-card{ flex-direction:column; }
   }
 
   footer{

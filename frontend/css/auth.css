@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Inter', sans-serif;
-    background: linear-gradient(145deg, #f7f9fc 0%, #eef2f7 100%);
+    background: linear-gradient(145deg, #f8f2dd 0%, #f3ecd2 100%);
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -16,23 +16,23 @@ body {
 }
 
 .auth-card {
-    background: rgba(255, 255, 255, 0.75);
+    background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     border-radius: 2.5rem;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 4px 18px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 25px 50px -12px rgba(60, 50, 20, 0.2), 0 4px 18px rgba(60, 50, 20, 0.05);
     padding: 2.5rem 2.8rem;
     max-width: 480px;
     width: 100%;
     transition: all 0.2s ease;
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
 .auth-card h1 {
     font-size: 2.2rem;
     font-weight: 700;
     letter-spacing: -0.02em;
-    color: #0b1a2e;
+    color: #3c6b41;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -40,18 +40,18 @@ body {
 }
 
 .auth-card h1 i {
-    color: #3b7cff;
+    color: #5c8a3a;
     font-size: 2rem;
 }
 
 .subhead {
-    color: #4a5c72;
+    color: #6b6350;
     font-weight: 500;
     font-size: 0.95rem;
     margin-bottom: 2rem;
-    border-left: 3px solid #3b7cff;
+    border-left: 3px solid #5c8a3a;
     padding-left: 0.9rem;
-    background: rgba(59, 124, 255, 0.04);
+    background: rgba(92, 138, 58, 0.06);
     border-radius: 0 8px 8px 0;
 }
 
@@ -73,7 +73,7 @@ body {
     border-radius: 40px;
     font-weight: 600;
     font-size: 1rem;
-    color: #2c3e50;
+    color: #4a4536;
     cursor: pointer;
     transition: 0.2s ease;
     font-family: 'Inter', sans-serif;
@@ -89,8 +89,8 @@ body {
 
 .toggle-tabs button.active {
     background: #ffffff;
-    box-shadow: 0 8px 18px -6px rgba(0, 20, 50, 0.12);
-    color: #0b1a2e;
+    box-shadow: 0 8px 18px -6px rgba(60, 50, 20, 0.14);
+    color: #3c6b41;
     font-weight: 700;
     border: 1px solid rgba(255, 255, 255, 0.8);
 }
@@ -109,18 +109,18 @@ body {
     background: white;
     border-radius: 60px;
     padding: 0.1rem 1.2rem;
-    border: 1.5px solid #e2e9f2;
+    border: 1.5px solid #e2ddc9;
     transition: 0.2s;
     box-shadow: 0 2px 6px rgba(0,0,0,0.01);
 }
 
 .input-wrapper:focus-within {
-    border-color: #3b7cff;
-    box-shadow: 0 4px 12px rgba(59, 124, 255, 0.15);
+    border-color: #5c8a3a;
+    box-shadow: 0 4px 12px rgba(92, 138, 58, 0.15);
 }
 
 .input-wrapper i {
-    color: #7b8ba3;
+    color: #a39d87;
     font-size: 1rem;
     margin-right: 0.8rem;
 }
@@ -132,20 +132,20 @@ body {
     background: transparent;
     font-size: 1rem;
     font-weight: 500;
-    color: #0b1a2e;
+    color: #2f2a20;
     outline: none;
     font-family: 'Inter', sans-serif;
 }
 
 .input-wrapper input::placeholder {
-    color: #a3b5cc;
+    color: #b5ad94;
     font-weight: 400;
-    opacity: 0.7;
+    opacity: 0.85;
 }
 
 .btn-primary {
     width: 100%;
-    background: #0b1a2e;
+    background: #5c8a3a;
     border: none;
     padding: 1rem;
     border-radius: 60px;
@@ -160,7 +160,7 @@ body {
     transition: 0.2s;
     margin-top: 0.7rem;
     font-family: 'Inter', sans-serif;
-    box-shadow: 0 8px 20px -8px rgba(11, 26, 46, 0.3);
+    box-shadow: 0 8px 20px -8px rgba(60, 107, 65, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -169,9 +169,9 @@ body {
 }
 
 .btn-primary:hover {
-    background: #1f3349;
+    background: #4a7130;
     transform: scale(1.01);
-    box-shadow: 0 12px 28px -10px #0b1a2e55;
+    box-shadow: 0 12px 28px -10px rgba(60, 107, 65, 0.5);
 }
 
 .btn-primary:active {
@@ -184,9 +184,9 @@ body {
     border-radius: 40px;
     font-weight: 500;
     font-size: 0.9rem;
-    background: #f0f4fe;
-    color: #1a3b77;
-    border-left: 4px solid #3b7cff;
+    background: #f7f0d8;
+    color: #4a4536;
+    border-left: 4px solid #5c8a3a;
     display: flex;
     align-items: center;
     gap: 0.6rem;
@@ -194,15 +194,15 @@ body {
 }
 
 .message-box.error {
-    background: #fff0f0;
-    color: #a12b2b;
-    border-left-color: #e05a5a;
+    background: #fbe4e1;
+    color: #c0392b;
+    border-left-color: #c0392b;
 }
 
 .message-box.success {
-    background: #e6f7ec;
-    color: #1e6a3e;
-    border-left-color: #2b9c5c;
+    background: #e6f2e0;
+    color: #2e6b2f;
+    border-left-color: #5c8a3a;
 }
 
 .message-box i {
@@ -212,15 +212,15 @@ body {
 .footer-note {
     margin-top: 1.8rem;
     font-size: 0.8rem;
-    color: #6b7e98;
+    color: #8a8266;
     text-align: center;
-    border-top: 1px solid #dce4ef;
+    border-top: 1px solid #eee6cf;
     padding-top: 1.5rem;
     letter-spacing: 0.01em;
 }
 
 .footer-note i {
-    color: #3b7cff;
+    color: #5c8a3a;
     margin: 0 0.2rem;
 }
 
@@ -235,5 +235,21 @@ body {
     .toggle-tabs button {
         font-size: 0.9rem;
         padding: 0.6rem 0.2rem;
+    }
+    .auth-card h1 {
+        font-size: 1.7rem;
+    }
+    .auth-card h1 i {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 360px) {
+    /* Ang First name / Last name row sa Register form ay may inline
+       flex style sa login.php mismo -- sa napakaliit na screen,
+       ligtas na i-stack pababa sa halip na patuloy na siksikan. */
+    .form-group[style*="display:flex"] {
+        flex-direction: column;
+        gap: 1rem !important;
     }
 }

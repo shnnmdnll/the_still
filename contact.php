@@ -46,9 +46,33 @@ require_once __DIR__ . '/backend/includes/auth_guard.php';
     <a href="logout.php" class="btn-logout-mobile" style="display:none; color:var(--brown); font-weight:600;">Logout (<?php echo htmlspecialchars($currentUserName); ?>)</a>
   </nav>
   <div class="user-menu">
+    <div class="notif-menu" style="position:relative; flex-shrink:0;">
+      <button type="button" class="notif-btn" id="notifBtn" title="Notifications" aria-label="Notifications" style="position:relative; display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:50%; background:#fff; border:1.5px solid #5c8a3a; color:#3c6b41; cursor:pointer;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6z"/><path d="M9.5 18a2.5 2.5 0 0 0 5 0"/></svg>
+        <span id="notifBadge" style="display:none; position:absolute; top:-3px; right:-3px; min-width:16px; height:16px; padding:0 3px; border-radius:8px; background:#c0392b; color:#fff; font-size:.62rem; line-height:16px; text-align:center; font-weight:700;">0</span>
+      </button>
+      <div class="notif-dropdown" id="notifDropdown" style="display:none; position:absolute; right:0; top:50px; background:#fff; border:1px solid #e2ddc9; border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.12); width:320px; max-height:380px; overflow-y:auto; z-index:60;">
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:1px solid #f0ece0;">
+          <strong style="font-size:.9rem; color:#2f2a20;">Booking Notifications</strong>
+          <a href="#" id="notifMarkAllRead" style="font-size:.78rem; color:#5c8a3a; text-decoration:none; font-weight:600;">Mark all read</a>
+        </div>
+        <div id="notifList" style="padding:24px 16px; text-align:center; color:#8a8368; font-size:.85rem;">Loading…</div>
+        <div id="notifEmpty" style="display:none; padding:24px 16px; text-align:center; color:#8a8368; font-size:.85rem;">No booking notifications yet.</div>
+      </div>
+    </div>
     <span class="user-greet">Hi, <?php echo htmlspecialchars($currentUserName); ?></span>
     <button class="btn-book" onclick="location.href='homepage.php#top'">Book Your Escape</button>
-    <a href="logout.php" class="btn-logout">Logout</a>
+    <div class="profile-menu" style="position:relative; flex-shrink:0;">
+      <button type="button" class="profile-menu-btn" title="Account" aria-label="Account menu" style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:50%; background:#fff; border:1.5px solid #5c8a3a; color:#3c6b41; cursor:pointer;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+      </button>
+      <div class="profile-dropdown" style="display:none; position:absolute; right:0; top:50px; background:#fff; border:1px solid #e2ddc9; border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.12); min-width:180px; overflow:hidden; z-index:50;">
+        <a href="profile.php" style="display:block; padding:12px 16px; color:#2f2a20; text-decoration:none; font-size:.9rem; font-weight:500;">Account</a>
+        <a href="my_bookings.php" style="display:block; padding:12px 16px; color:#2f2a20; text-decoration:none; font-size:.9rem; font-weight:500; border-top:1px solid #f0ece0;">My Bookings</a>
+        <a href="stay_history.php" style="display:block; padding:12px 16px; color:#2f2a20; text-decoration:none; font-size:.9rem; font-weight:500; border-top:1px solid #f0ece0;">Stay History</a>
+        <a href="logout.php" style="display:block; padding:12px 16px; color:#c0392b; text-decoration:none; font-size:.9rem; font-weight:500; border-top:1px solid #f0ece0;">Logout</a>
+      </div>
+    </div>
   </div>
   <button class="burger" id="burgerBtn">☰</button>
 </header>
@@ -100,7 +124,7 @@ require_once __DIR__ . '/backend/includes/auth_guard.php';
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg>
       </div>
       <div>
-        <strong>hello@pahingahan.com</strong>
+        <strong>thestill828@gmail.com</strong>
         <span>Email Us</span>
       </div>
     </div>
@@ -161,6 +185,139 @@ require_once __DIR__ . '/backend/includes/auth_guard.php';
 
 <div class="toast" id="toast"></div>
 
-<script src="frontend/js/contact.js"></script>
+<script src="frontend/js/contact.js?v=<?php echo filemtime(__DIR__ . '/frontend/js/contact.js'); ?>"></script>
+<script>
+(function(){
+  document.querySelectorAll(".profile-menu-btn").forEach(function(btn){
+    var dropdown = btn.nextElementSibling;
+    btn.addEventListener("click", function(e){
+      e.stopPropagation();
+      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    });
+  });
+  document.addEventListener("click", function(){
+    document.querySelectorAll(".profile-dropdown").forEach(function(d){ d.style.display = "none"; });
+  });
+})();
+
+// ---- Notification bell: real booking notifications from api/get_notifications.php ----
+(function(){
+  var notifBtn = document.getElementById("notifBtn");
+  var notifDropdown = document.getElementById("notifDropdown");
+  var notifBadge = document.getElementById("notifBadge");
+  var notifList = document.getElementById("notifList");
+  var notifEmpty = document.getElementById("notifEmpty");
+  var markAllRead = document.getElementById("notifMarkAllRead");
+  var SEEN_KEY = "pahingahan_seen_notif_ids";
+
+  var notifications = [];
+
+  function getSeenIds(){
+    try {
+      return JSON.parse(localStorage.getItem(SEEN_KEY) || "[]");
+    } catch(e){ return []; }
+  }
+
+  function markAllSeen(){
+    var ids = notifications.map(function(n){ return n.id; });
+    localStorage.setItem(SEEN_KEY, JSON.stringify(ids));
+    notifications.forEach(function(n){ n.read = true; });
+    render();
+  }
+
+  function fetchNotifications(onDone){
+    fetch("api/get_notifications.php", { credentials: "same-origin" })
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        if(!data.success){
+          notifList.innerHTML = "";
+          notifEmpty.style.display = "block";
+          notifEmpty.textContent = "Unable to load notifications right now.";
+          notifBadge.style.display = "none";
+          return;
+        }
+        var seen = getSeenIds();
+        notifications = (data.notifications || []).map(function(n){
+          n.read = seen.indexOf(n.id) !== -1;
+          return n;
+        });
+        render();
+        if (typeof onDone === "function") onDone();
+      })
+      .catch(function(){
+        notifList.innerHTML = "";
+        notifEmpty.style.display = "block";
+        notifEmpty.textContent = "Unable to load notifications right now.";
+        notifBadge.style.display = "none";
+      });
+  }
+
+  function statusDotColor(status){
+    if(status === "confirmed") return "#5c8a3a";
+    if(status === "declined") return "#c0392b";
+    return "#c98a1f"; // pending / default
+  }
+
+  function render(){
+    notifList.innerHTML = "";
+    if(notifications.length === 0){
+      notifEmpty.style.display = "block";
+      notifEmpty.textContent = "No booking notifications yet.";
+    } else {
+      notifEmpty.style.display = "none";
+      notifications.forEach(function(n){
+        var item = document.createElement("a");
+        item.href = (String(n.id).charAt(0) === "h") ? "booking_management.php" : "my_bookings.php";
+        item.style.cssText = "display:block; padding:12px 16px; text-decoration:none; border-bottom:1px solid #f0ece0; background:" + (n.read ? "#fff" : "#f7f9f2") + ";";
+        item.innerHTML =
+          '<div style="display:flex; align-items:flex-start; gap:8px;">' +
+            '<span style="margin-top:5px; width:7px; height:7px; border-radius:50%; background:' + statusDotColor(n.status) + '; flex-shrink:0; opacity:' + (n.read ? '0' : '1') + ';"></span>' +
+            '<div>' +
+              '<div style="font-size:.85rem; font-weight:600; color:#2f2a20;">' + n.title + '</div>' +
+              '<div style="font-size:.8rem; color:#5c5646; margin-top:2px;">' + n.message + '</div>' +
+            '</div>' +
+          '</div>';
+        notifList.appendChild(item);
+      });
+    }
+    updateBadge();
+  }
+
+  function updateBadge(){
+    var unread = notifications.filter(function(n){ return !n.read; }).length;
+    if(unread > 0){
+      notifBadge.style.display = "block";
+      notifBadge.textContent = unread > 9 ? "9+" : String(unread);
+    } else {
+      notifBadge.style.display = "none";
+    }
+  }
+
+  notifBtn.addEventListener("click", function(e){
+    e.stopPropagation();
+    var isOpen = notifDropdown.style.display === "block";
+    document.querySelectorAll(".profile-dropdown").forEach(function(d){ d.style.display = "none"; });
+    notifDropdown.style.display = isOpen ? "none" : "block";
+    if(!isOpen){
+      fetchNotifications(function(){
+        markAllSeen();
+      });
+    }
+  });
+
+  markAllRead.addEventListener("click", function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    markAllSeen();
+  });
+
+  document.addEventListener("click", function(){
+    notifDropdown.style.display = "none";
+  });
+  notifDropdown.addEventListener("click", function(e){ e.stopPropagation(); });
+
+  fetchNotifications();
+})();
+</script>
 </body>
 </html>

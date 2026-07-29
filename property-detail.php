@@ -17,7 +17,7 @@ require_once __DIR__ . '/backend/controllers/property_controller.php';
     <!-- ===== NAVBAR ===== -->
     <nav class="navbar">
         <a href="default.php" class="logo">pahingahan<span>.</span></a>
-        <a href="default.php" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+        <a href="homepage.php" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
     </nav>
 
     <div class="container">
@@ -27,7 +27,14 @@ require_once __DIR__ . '/backend/controllers/property_controller.php';
                 <?php if (!empty($property['image_url'])): ?>
                     <img src="<?php echo htmlspecialchars($property['image_url']); ?>" alt="<?php echo htmlspecialchars($property['name']); ?>">
                 <?php else: ?>
-                    <i class="fas fa-home"></i>
+                    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; width:100%; background:linear-gradient(135deg, #eef1ff 0%, #e2e8ff 100%); color:#6b74d6; gap:12px;">
+                        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="3"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <path d="M21 15l-5-5L5 21"/>
+                        </svg>
+                        <span style="font-size:.85rem; font-weight:600; letter-spacing:.01em;">No photo yet</span>
+                    </div>
                 <?php endif; ?>
             </div>
 
@@ -82,7 +89,7 @@ require_once __DIR__ . '/backend/controllers/property_controller.php';
                 </div>
             <?php endif; ?>
 
-            <button class="btn-book" onclick="alert('Booking functionality coming soon!')">
+            <button class="btn-book" onclick="window.location.href='book_now.php?property_id=<?php echo (int)$property['id']; ?>'">
                 <i class="fas fa-calendar-check"></i> Book Now
             </button>
         </div>
@@ -98,7 +105,13 @@ require_once __DIR__ . '/backend/controllers/property_controller.php';
                                 <?php if (!empty($similar['image_url'])): ?>
                                     <img src="<?php echo htmlspecialchars($similar['image_url']); ?>" alt="<?php echo htmlspecialchars($similar['name']); ?>" style="width:100%;height:100%;object-fit:cover;">
                                 <?php else: ?>
-                                    <i class="fas fa-home"></i>
+                                    <div style="display:flex; align-items:center; justify-content:center; height:100%; width:100%; background:linear-gradient(135deg, #eef1ff 0%, #e2e8ff 100%); color:#6b74d6;">
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect x="3" y="3" width="18" height="18" rx="3"/>
+                                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                                            <path d="M21 15l-5-5L5 21"/>
+                                        </svg>
+                                    </div>
                                 <?php endif; ?>
                             </div>
                             <div class="sim-body">

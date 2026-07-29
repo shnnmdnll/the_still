@@ -6,7 +6,7 @@
  * (moved out of search.php, which is now view-only)
  *
  * Reads $_GET['q'], $_GET['location'], $_GET['guests'] and sets:
- *   $results - matching property rows, newest first
+ *   $results - matching unit rows, newest first
  * -----------------------------------------------------------------
  */
 
@@ -17,7 +17,7 @@ $location    = isset($_GET['location']) ? trim($_GET['location']) : '';
 $guests      = isset($_GET['guests']) ? intval($_GET['guests']) : 0;
 
 // Build query
-$sql = "SELECT * FROM properties WHERE status = 'available'";
+$sql = "SELECT * FROM units WHERE status = 'available'";
 $params = [];
 
 if (!empty($search_term)) {

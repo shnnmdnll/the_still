@@ -12,5 +12,5 @@
 
 require_once __DIR__ . '/../includes/db.php';
 
-$stmt = $pdo->query("SELECT * FROM properties WHERE status = 'available' ORDER BY created_at DESC");
+$stmt = $pdo->query("SELECT * FROM units WHERE status = 'available' ORDER BY created_at DESC");
 $properties = $stmt->fetchAll();
